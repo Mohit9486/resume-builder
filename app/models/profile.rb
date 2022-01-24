@@ -1,6 +1,8 @@
 class Profile < ApplicationRecord
     has_many(:educations, dependent: :destroy)
+    has_one_attached :image, :dependent => :destroy
     accepts_nested_attributes_for(:educations , reject_if: :reject_education_create, allow_destroy: true)
+
 
     belongs_to :user
 
