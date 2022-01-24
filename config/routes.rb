@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   post   'login'   => 'sessions#create'
   delete 'logout'  => 'sessions#destroy'
 
+  get    'signup'   => 'sessions#signup'
+  post   'signup'   => 'sessions#newsignup'
+
   resources :profiles , only: [:update]
   resources :educations , only: [:new]
 end

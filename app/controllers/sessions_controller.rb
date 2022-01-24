@@ -14,9 +14,38 @@ class SessionsController < ApplicationController
         end
     end
   
-    def destroy
-        log_out
-        redirect_to(root_url)
+
+
+    def signup
+        @user = User.new
     end
+
+    def newsignup
+          updated_user_params = user_params
+          @user = User.new(user_params)
+          if @user.save
+            @user.profile = Profile.new
+            flash[:success] = "Signup successfully"
+            redirect_to login_path
+          else
+            flash[:error] = @user.errors.full_messages[0]
+            redirect_to signup_path
+          end
+      end
+
+
+      def destroy
+            log_out
+            redirect_to(root_url)
+        end
+        
+
+      private
+        def user_params
+          params.require(:user).permit(:name, :email, :password, :password_confirmation)
+        end
+
+
+        
 
 end
