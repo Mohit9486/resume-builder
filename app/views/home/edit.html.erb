@@ -1,21 +1,39 @@
 <%= render 'shared/header' %>
 
+
 <main class="py-10 max-w-7xl mx-auto px-4 sm:px-8">
     <%= form_for(@profile, builder: TailwindInputBuilder) do |f| %>
         <div class="flex justify-end items-center w-full mb-4">
             <div>
+
+                <%= link_to "Copy Link", "", target: '_blank',class: "py-2 px-4 border-2 border-purple-600 text-purple-600 hover:border-purple-700 hover:text-purple-700 text-center text-base font-semibold shadow-md hover:shadow-none focus:outline-none rounded-lg"%>
+
+                <%= link_to "Public view", public_profiles_path(@profile.id), target: '_blank',class: "bar py-2 px-4 border-2 border-purple-600 text-purple-600 hover:border-purple-700 hover:text-purple-700 text-center text-base font-semibold shadow-md hover:shadow-none focus:outline-none rounded-lg"%>
                 <%= f.submit "Save", class: "flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-green-200" %><br/>
             </div>
         </div>
 
         <%= render 'shared/edit_section', title: "Profile details" do %>
             <%= f.text_field :name, value: @profile.name || current_user.name, placeholder: "Name" %><br/>
-            <%= f.file_field :image, value: @profile.image %>
+
             <div class="flex items-center my-4">
-                <%= image_tag @profile.image.attached? ? @profile.image : gravatar_url_for(current_user),  
-                    id: "image-preview", style:"max-width:200px"
-                %>
+
+        
+                    <%= f.file_field :image, id: "userImage",accept: "image/*"%>
+                  
+
+                <% if @profile.image.attached? %>
+                    <%= image_tag @profile.image ,style:"max-width:200px" ,id: "image-preview"%>
+
+                <% else %>
+                    <%= image_tag gravatar_url_for(current_user), 
+                        id: "image-preview", style:"max-width:200px"
+                    %>
+                <%end%>
+
+                
             </div>
+            
             <%= f.text_field :job_title, value: @profile.job_title, placeholder: "Job title" %><br/>
             <%= f.text_field :total_experience, value: @profile.total_experience, placeholder: "Total experience" %><br/>
             <%= f.text_area :overview, value: @profile.overview, placeholder: "Profile overview", required: true %><br/>
@@ -39,6 +57,26 @@
             <% end %><br />
             <%= render 'shared/input/buttons/add', label: "+ Add Education", path: "/educations/new" %>
         <% end %>
+
+
+
+        <%= render 'shared/edit_section', title: "Experience" do %>
+            <%= f.fields_for :experiences do |experience| %>
+                <%= render 'shared/input/experience', experience: experience %>
+                <h3 class="text-lg font-semibold">Projects</h3>
+                    <div class="pl-4 mb-2 border-l border-blueGray-400">
+                        <%= render 'shared/edit_sub_section' do %>
+                            <%= experience.fields_for :projects do |project| %>
+                            <%= render 'shared/input/project', project: project %>
+                        <% end %><br/>
+                        <%= render 'shared/input/buttons/add', label: "+ Add Project", path: new_project_path(experience.object.id) %>
+                    </div>
+                <% end %>
+            <% end %><br />
+            <%= render 'shared/input/buttons/add', label: "+ Add Experience", path: "/experiences/new" %>
+        <% end %>
+
+
         
     <% end %>
 

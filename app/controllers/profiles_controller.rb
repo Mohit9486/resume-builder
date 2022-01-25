@@ -23,11 +23,22 @@ class ProfilesController < ApplicationController
         redirect_to(root_url) unless @user == current_user
     end
 
+        def share
+        @profile = Profile.find_by_id(params[:id])
+        if @profile
+            render('home/link')
+        else
+            flash[:danger] = 'Profile doesnt exist'
+            redirect_to root_url
+        end
+    end
+
     private
         def profile_params
             params.require(:profile).permit(:name, :job_title, :total_experience, :overview, :image,
                 :career_highlights, :primary_skills, :secondary_skills,
-                :educations_attributes => [ :id, :school, :degree, :description, :start, :end, :_destroy]
-            )
+                :educations_attributes => [ :id, :school, :degree, :description, :start, :end, :_destroy],
+                :experiences_attributes => [ :id, :company, :position, :start,:end,:description, :_destroy,{ :projects_attributes => [ :id, :title, :prurl, :stack,:description, :_destroy] }])
+            
         end
 end
